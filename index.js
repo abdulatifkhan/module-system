@@ -1,19 +1,26 @@
+const http = require("http")
 const express = require("express")
-
-const routerA = express.Router()
-const routerB = express.Router()
+const { ApolloServer } = require("apollo-server-express")
+const { PORT } = require("./src/Settings")
+const modules = require("./src/Modules")
 
 const app = express()
 
-routerA.get("/", (_, res) => res.send("Module A Home"))
+const server = new ApolloServer({
+  modules,
+  subscriptions: {
+    onConnect: (connectionParams, WebSocket, context) => {},
+    onDisconnect: (WebSocket, context) => {},
+  },
+})
 
-routerA.get("/list", (_, res) => res.send("Module A List"))
+server.applyMiddleware({ app, path: '/graphql' })
 
-routerB.get("/", (_, res) => res.send("Module B Home"))
+const httpServer = http.createServer(app)
 
-routerB.get("/list", (_, res) => res.send("Module B List"))
+server.installSubscriptionHandlers(httpServer)
 
-app.use("/a", routerA)
-app.use("/b", routerB)
-
-app.listen(4009)
+httpServer.listen({ port: PORT }, () => {
+  console.log('http://localhost:' + PORT + server.graphqlPath);
+  console.log('ws://localhost:' + PORT + server.subscriptionsPath);
+})
