@@ -1,12 +1,5 @@
 // const User = require("./User")
 
-const resolvers = {
-
-  MutationResponse: {
-    __resolveType: global => {
-      return "User"
-    },
-  },
-}
+const resolvers = {}
 
 module.exports = resolvers
