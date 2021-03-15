@@ -3,7 +3,8 @@ const User = require("./User")
 const resolvers = {
 
   User: {
-    id: user => user.id,
+    id: user => user.user_id,
+    username: user => user.user_username,
   },
 
   Query: {
